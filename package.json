@@ -1,0 +1,64 @@
+{
+  "name": "@raindrop/wizard",
+  "version": "1.0.0",
+  "description": "Command Line Interface (CLI) wizard to streamline the integration of Raindrop into user projects",
+  "repository": {
+    "type": "git",
+    "url": "Raindrop-Wizard"
+  },
+  "license": "ISC",
+  "author": "Priyam",
+  "type": "commonjs",
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "prebuild": "pnpm clean",
+    "build:watch": "pnpm tsc -w",
+    "build": "pnpm tsc",
+    "postbuild": "chmod +x ./dist/bin.js && cp -r scripts/** dist && cp -r src/utils/rules dist/src/utils && pnpm test:smoke",
+    "test:smoke": "node -e \"require('./dist/bin.js')\" 2>&1 | head -5 | grep -q 'Raindrop Wizard' || (echo 'Smoke test failed: compiled binary crashed on load' && exit 1)",
+    "lint": "pnpm lint:prettier && pnpm lint:eslint",
+    "lint:prettier": "prettier --check \"{lib,src,test}/**/*.ts\"",
+    "lint:eslint": "eslint . --cache --format stylish",
+    "fix": "pnpm fix:eslint && pnpm fix:prettier",
+    "fix:prettier": "prettier --write \"{lib,src,test}/**/*.ts\"",
+    "fix:eslint": "eslint . --format stylish --fix",
+    "test": "pnpm build && jest",
+    "test:e2e": "pnpm build && ./e2e-tests/run.sh",
+    "test:e2e-record": "export RECORD_FIXTURES=true && pnpm build && ./e2e-tests/run.sh",
+    "try": "tsx bin.ts",
+    "dev": "pnpm build && pnpm link --global && pnpm build:watch",
+    "test:watch": "jest --watch",
+    "prepare": "husky"
+  },
+  "files": [
+    "dist/bin.*",
+    "dist/src",
+    "package.json",
+    "README.md"
+  ],
+  "main": "dist/index.js",
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "axios": "^1.13.2",
+    "chalk": "^5.6.2",
+    "child_process": "^1.0.2",
+    "eslint": "^9.39.2",
+    "fast-glob": "^3.3.3",
+    "glob": "^13.0.0",
+    "husky": "^9.1.7",
+    "path": "^0.12.7",
+    "raindrop-ai": "^0.0.75",
+    "read-env": "^2.0.0",
+    "semver": "^7.7.3",
+    "tsc": "^2.0.4",
+    "tsx": "^4.21.0",
+    "yargs": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.8",
+    "@types/react": "^19.2.8",
+    "@types/semver": "^7.7.1",
+    "@types/yargs": "^17.0.35",
+    "typescript": "^5.9.3"
+  }
+}
